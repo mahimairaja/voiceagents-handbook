@@ -1,0 +1,16 @@
+[project]
+name = "voiceagents-handbook-ch09"
+version = "0.1.0"
+description = "Code for Chapter 9 of Voice Agents Handbook: Deployment and Observability"
+requires-python = ">=3.11"
+dependencies = [
+    "livekit-agents==1.5.15",
+    "livekit-plugins-silero>=1.5,<1.6",
+    "livekit-plugins-deepgram>=1.5,<1.6",
+    "livekit-plugins-openai>=1.5,<1.6",
+    "livekit-plugins-cartesia>=1.5,<1.6",
+    "livekit-plugins-turn-detector>=1.5,<1.6",
+    "python-dotenv>=1.0",
+    "opentelemetry-sdk>=1.27",
+    "opentelemetry-exporter-otlp>=1.27",
+]

@@ -1,0 +1,31 @@
+services:
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: voiceagents-handbook-ch09:local
+    env_file:
+      - .env
+    environment:
+      # Forward OTLP traces to the local collector below.
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+    ports:
+      - "8081:8081"   # health check port
+    depends_on:
+      - otel-collector
+    restart: unless-stopped
+    # Voice agents are long-running; give the container time to drain in-flight
+    # sessions before docker compose kills it.
+    stop_grace_period: 10m
+
+  # Optional local OTLP collector. Drop a collector config at
+  # ./otel-collector-config.yaml to route spans to Honeycomb, Tempo, or stdout.
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.107.0
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+    restart: unless-stopped

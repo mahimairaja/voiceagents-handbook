@@ -34,6 +34,10 @@ It should read:
 
 No repo code change required.
 
-## 5. Cartesia voice ID without discovery note
+## 5. Chapters 2-9 use direct plugins; Chapter 1 uses Inference
+
+Chapter 1 of the book teaches `inference.STT/LLM/TTS` (the LiveKit hosted-routing wrapper) as the canonical baseline, and explicitly says: "Both paths work. I use Inference in the examples because it reads more cleanly and removes one set of API keys from the discussion; the direct-plugin path is what you reach for when you need provider-specific features." This repo's `01-voice-stack/agent.py` matches the book verbatim and uses Inference. Chapters 2-9 use the direct-plugin path (`deepgram.STT`, `openai.LLM`, `cartesia.TTS`) because later chapters demonstrate provider-specific features (Krisp BVC in Ch 7, Claude Haiku triage in Ch 6, etc.) where the direct plugin imports are the natural shape. Functionally equivalent for the baseline session; pick the shape that fits your needs.
+
+## 6. Cartesia voice ID without discovery note
 
 The Cartesia voice ID `9626c31c-bec5-4cca-baa8-f8ba9e84c8bc` (Jacqueline) appears in Chapters 1, 2, and 4 without an explanation of how to discover or copy a different voice ID. The repo's `02-first-agent/README.md` adds a one-line note: you can browse other voices at play.cartesia.ai and copy the ID from the URL.

@@ -1,0 +1,23 @@
+[project]
+name = "voiceagents-handbook-ch08"
+version = "0.1.0"
+description = "Code for Chapter 8 of Voice Agents Handbook"
+requires-python = ">=3.11"
+dependencies = [
+    "livekit-agents==1.5.15",
+    "livekit-plugins-silero>=1.5,<1.6",
+    "livekit-plugins-deepgram>=1.5,<1.6",
+    "livekit-plugins-openai>=1.5,<1.6",
+    "livekit-plugins-cartesia>=1.5,<1.6",
+    "python-dotenv>=1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

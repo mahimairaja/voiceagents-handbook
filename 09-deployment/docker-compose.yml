@@ -7,21 +7,23 @@ services:
     env_file:
       - .env
     environment:
-      # Forward OTLP traces to the local collector below.
+      # Forward OTLP traces to the local collector if it is running. If
+      # the collector profile is not enabled, this endpoint is ignored.
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
     ports:
       - "8081:8081"   # health check port
-    depends_on:
-      - otel-collector
     restart: unless-stopped
     # Voice agents are long-running; give the container time to drain in-flight
     # sessions before docker compose kills it.
     stop_grace_period: 10m
 
-  # Optional local OTLP collector. Drop a collector config at
-  # ./otel-collector-config.yaml to route spans to Honeycomb, Tempo, or stdout.
+  # Optional local OTLP collector. Opt in with `docker compose --profile otel up`.
+  # Drop a collector config at ./otel-collector-config.yaml first to route spans
+  # to Honeycomb, Tempo, stdout, etc. Without the profile, the default
+  # `docker compose up` runs the agent alone and ignores this service.
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.107.0
+    profiles: ["otel"]
     command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro

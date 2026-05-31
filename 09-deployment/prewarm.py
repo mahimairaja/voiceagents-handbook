@@ -54,9 +54,7 @@ server.setup_fnc = my_prewarm
 class Assistant(Agent):
     def __init__(self) -> None:
         super().__init__(
-            instructions=(
-                "You are a friendly voice assistant. Speak in short sentences."
-            )
+            instructions=("You are a friendly voice assistant. Speak in short sentences.")
         )
 
 

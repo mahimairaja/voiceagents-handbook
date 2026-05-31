@@ -83,9 +83,7 @@ class BillingAgent(Agent):
 
     async def on_enter(self) -> None:
         await self.session.generate_reply(
-            instructions=(
-                "Introduce yourself briefly as billing, and ask how you can help."
-            )
+            instructions=("Introduce yourself briefly as billing, and ask how you can help.")
         )
 
 

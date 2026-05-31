@@ -13,7 +13,7 @@ Three surfaces (phone, browser, mobile), one agent. The transport changes; the a
 
 Browser and mobile clients are not in this Python repo. Start from the official LiveKit starters:
 
-- Browser (Next.js plus LiveKit React): https://github.com/livekit-examples/voice-pipeline-frontend
+- Browser (Next.js plus LiveKit React): https://github.com/livekit-examples/agent-starter-react
 - React Native (iOS and Android): https://github.com/livekit-examples/voice-assistant-react-native
 - SwiftUI (iOS): https://github.com/livekit-examples/voice-assistant-swift
 - Flutter: https://github.com/livekit-examples/voice-assistant-flutter

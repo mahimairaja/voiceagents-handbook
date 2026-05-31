@@ -47,10 +47,12 @@ async def my_agent(ctx: JobContext):
     is_phone = participant.kind == rtc.ParticipantKind.PARTICIPANT_KIND_SIP
 
     if is_phone:
-        # Phone caller: narrowband STT, agent-side BVC.
+        # Phone caller: narrowband STT and agent-side BVCTelephony.
+        # BVCTelephony is tuned for narrowband / 8 kHz SIP audio;
+        # the wideband BVC() model would over-suppress phone speech.
         stt = deepgram.STT(model="nova-2-phonecall")
         input_options = agents.RoomInputOptions(
-            noise_cancellation=noise_cancellation.BVC(),
+            noise_cancellation=noise_cancellation.BVCTelephony(),
         )
     else:
         # Browser or native mobile: full-bandwidth STT, no extra NC.
@@ -72,11 +74,7 @@ async def my_agent(ctx: JobContext):
         room_input_options=input_options,
     )
 
-    greeting = (
-        "Greet the caller briefly."
-        if is_phone
-        else "Greet the user and offer to help."
-    )
+    greeting = "Greet the caller briefly." if is_phone else "Greet the user and offer to help."
     await session.generate_reply(instructions=greeting)
 
 

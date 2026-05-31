@@ -46,8 +46,7 @@ class PrimaryAgent(Agent):
     def __init__(self) -> None:
         super().__init__(
             instructions=(
-                "You are answering the phone for ACME Plumbing. "
-                "Be helpful, friendly, and direct."
+                "You are answering the phone for ACME Plumbing. Be helpful, friendly, and direct."
             )
         )
 
@@ -72,27 +71,42 @@ async def alert_supervisor(transcript: str) -> None:
     logger.warning("supervisor alert: %s", transcript)
 
 
-async def run_observer(session: AgentSession) -> None:
-    """Watch the user's transcripts and score them against a rubric.
+def run_observer(session: AgentSession) -> None:
+    """Attach a side-channel observer to the session.
 
-    The observer never publishes audio back to the room. It only reads the
-    conversation and emits side-channel outputs.
+    Watches user transcripts and scores them against a rubric. Persists the
+    cumulative score on the session so anything else in the call can read it
+    via ``session.rubric_score``. The observer never publishes audio back to
+    the room; outputs go to log handlers and ``alert_supervisor``.
+
+    This function is synchronous and returns immediately. Do not ``await`` or
+    ``asyncio.create_task`` it.
     """
 
-    rubric_score = 0.0
-    async for event in session.events("conversation_item_added"):
+    # Stash cumulative state on the session itself so other call-scoped code
+    # (or a shutdown hook) can read the final score without holding a closure.
+    session.rubric_score = 0.0
+
+    @session.on("conversation_item_added")
+    def _on_conversation_item(event):
         item = getattr(event, "item", None)
         if item is None:
-            continue
+            return
         if getattr(item, "role", None) != "user":
-            continue
+            return
         transcript = getattr(item, "text_content", "") or ""
         if not transcript:
-            continue
-        score = await score_against_rubric(transcript)
-        rubric_score += score
-        if score < RUBRIC_THRESHOLD:
-            await alert_supervisor(transcript)
+            return
+        asyncio.create_task(_score_and_alert(session, transcript))
+
+
+async def _score_and_alert(session: AgentSession, transcript: str) -> None:
+    """Run the (potentially slow) scoring outside the event handler."""
+
+    score = await score_against_rubric(transcript)
+    session.rubric_score = getattr(session, "rubric_score", 0.0) + score
+    if score < RUBRIC_THRESHOLD:
+        await alert_supervisor(transcript)
 
 
 @server.rtc_session(agent_name="voiceagents-handbook-ch06")
@@ -108,11 +122,11 @@ async def my_agent(ctx: JobContext):
         ),
     )
 
-    # Start the observer in the background. In production the observer runs as
-    # its own participant in the same room with a subscribe-only token. This
+    # Attach the observer. In production the observer runs as its own
+    # participant in the same room with a subscribe-only token. This
     # in-process variant shows the analysis shape; deploy it as a separate
     # participant when you ship.
-    observer_task = asyncio.create_task(run_observer(session))
+    run_observer(session)
 
     await session.start(
         agent=PrimaryAgent(),
@@ -121,11 +135,6 @@ async def my_agent(ctx: JobContext):
         room_output_options=RoomOutputOptions(),
     )
     await session.generate_reply(instructions="Greet the caller warmly.")
-
-    async def cancel_observer():
-        observer_task.cancel()
-
-    ctx.add_shutdown_callback(cancel_observer)
 
 
 if __name__ == "__main__":

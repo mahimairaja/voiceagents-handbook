@@ -14,5 +14,11 @@ extend-exclude = [".venv", "**/.venv"]
 select = ["E", "F", "I", "W", "UP", "B"]
 ignore = ["E501"]
 
+[tool.ruff.lint.isort]
+# The chapter projects each have an `agent.py` module that their own
+# tests import via `from agent import Assistant`. Treat it as first-party
+# so the import ordering is stable.
+known-first-party = ["agent"]
+
 [tool.ruff.format]
 quote-style = "double"

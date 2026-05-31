@@ -78,9 +78,7 @@ async def my_agent(ctx: JobContext):
         ),
     )
     await session.start(agent=Assistant(), room=ctx.room)
-    await session.generate_reply(
-        instructions="Greet the user in one short sentence."
-    )
+    await session.generate_reply(instructions="Greet the user in one short sentence.")
 
 
 if __name__ == "__main__":

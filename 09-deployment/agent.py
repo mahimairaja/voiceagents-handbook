@@ -28,8 +28,8 @@ from livekit.agents import (
     AgentSession,
     JobContext,
     RunContext,
-    metrics,
     function_tool,
+    metrics,
 )
 from livekit.plugins import cartesia, deepgram, openai, silero
 

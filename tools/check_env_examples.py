@@ -34,9 +34,7 @@ SECRET_PATTERNS = [
 def main() -> int:
     failures: list[str] = []
     chapter_dirs = sorted(
-        p
-        for p in REPO_ROOT.iterdir()
-        if p.is_dir() and re.match(r"^\d{2}-", p.name)
+        p for p in REPO_ROOT.iterdir() if p.is_dir() and re.match(r"^\d{2}-", p.name)
     )
 
     if not chapter_dirs:
@@ -51,11 +49,11 @@ def main() -> int:
 
         content = env_example.read_text(encoding="utf-8")
         for pattern in SECRET_PATTERNS:
-            m = pattern.search(content)
-            if m:
-                snippet = m.group(0)[:48]
+            if pattern.search(content):
+                # Report only the file and the pattern label, never the
+                # matched content. We do not want CI logs to echo secrets.
                 failures.append(
-                    f"{chapter.name}/.env.example: looks like a live secret: {snippet}..."
+                    f"{chapter.name}/.env.example: value matches secret-like pattern /{pattern.pattern}/"
                 )
 
     if failures:

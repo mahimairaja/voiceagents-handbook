@@ -55,9 +55,7 @@ class ConsentScript(Agent):
         # Yield to the conversational agent. on_enter does not return-as-handoff
         # the way a function_tool does; use update_agent explicitly.
         self.session.update_agent(
-            CustomerServiceAgent(
-                chat_ctx=self.chat_ctx.copy(exclude_instructions=True)
-            )
+            CustomerServiceAgent(chat_ctx=self.chat_ctx.copy(exclude_instructions=True))
         )
 
 

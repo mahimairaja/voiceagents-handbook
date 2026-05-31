@@ -62,10 +62,7 @@ async def my_agent(ctx: JobContext):
         ),
     )
     await session.generate_reply(
-        instructions=(
-            "Greet the caller briefly. Ask how you can help. Keep it under "
-            "ten words."
-        )
+        instructions=("Greet the caller briefly. Ask how you can help. Keep it under ten words.")
     )
 
 

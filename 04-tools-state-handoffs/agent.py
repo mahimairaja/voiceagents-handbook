@@ -145,16 +145,16 @@ class ReceptionAgent(Agent):
 
         try:
             confirmation = await _call_booking_api(service, requested_time)
-        except SlotUnavailableError:
+        except SlotUnavailableError as err:
             raise ToolError(
                 "That time slot is no longer available. "
                 "Offer the caller the next two available slots."
-            )
-        except BookingAPIDown:
+            ) from err
+        except BookingAPIDown as err:
             raise ToolError(
                 "The booking system is temporarily unavailable. "
                 "Offer to take the caller's number and call them back."
-            )
+            ) from err
 
         context.userdata.service_requested = service
         return f"Booked: {confirmation.id}, {confirmation.scheduled_for}."
@@ -189,9 +189,7 @@ class BillingAgent(Agent):
 
     async def on_enter(self) -> None:
         await self.session.generate_reply(
-            instructions=(
-                "Introduce yourself briefly as billing, and ask how you can help."
-            )
+            instructions=("Introduce yourself briefly as billing, and ask how you can help.")
         )
 
 

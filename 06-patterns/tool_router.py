@@ -66,9 +66,7 @@ class Assistant(Agent):
         return f"{service} is {price:.2f} dollars."
 
     @function_tool()
-    async def check_availability(
-        self, context: RunContext, day: str
-    ) -> str:
+    async def check_availability(self, context: RunContext, day: str) -> str:
         """Check whether a plumber is available on the given day.
 
         Args:
@@ -83,9 +81,7 @@ class Assistant(Agent):
     async def list_services(self, context: RunContext) -> str:
         """List the plumbing services ACME offers with prices."""
 
-        return ", ".join(
-            f"{name} at {price:.2f} dollars" for name, price in SERVICE_PRICES.items()
-        )
+        return ", ".join(f"{name} at {price:.2f} dollars" for name, price in SERVICE_PRICES.items())
 
 
 @server.rtc_session(agent_name="voiceagents-handbook-ch06")

@@ -7,7 +7,6 @@ chapters extend this baseline.
 """
 
 from dotenv import load_dotenv
-
 from livekit import agents
 from livekit.agents import (
     Agent,

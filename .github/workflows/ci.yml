@@ -5,12 +5,18 @@ on:
     branches: [main]
   pull_request:
 
+# Default to read-only. Individual jobs can request more.
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint (ruff)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: astral-sh/setup-uv@v3
       - name: ruff check
         run: uvx ruff check .
@@ -22,6 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -33,9 +41,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: No em-dash or en-dash characters
         run: |
-          if grep -RE '—|–' --exclude-dir=.git --exclude-dir=.venv --exclude='uv.lock' .; then
+          # Exclude this workflow file: its grep regex contains the
+          # very characters we are scanning for, which would
+          # otherwise self-trigger.
+          if grep -RE '—|–' \
+              --exclude-dir=.git \
+              --exclude-dir=.venv \
+              --exclude='uv.lock' \
+              --exclude='ci.yml' \
+              .; then
             echo "::error::em-dash or en-dash found above"
             exit 1
           fi
@@ -43,7 +61,9 @@ jobs:
         run: |
           if grep -RiE 'crucial|essential|leverage|dive in|unpack|journey|robust|seamless|streamline|embark' \
               --include='README.md' --include='*.py' --include='*.md' \
-              --exclude-dir=.git --exclude-dir=.venv .; then
+              --exclude-dir=.git --exclude-dir=.venv \
+              --exclude='ci.yml' \
+              .; then
             echo "::error::banned cliche word found above"
             exit 1
           fi
@@ -66,6 +86,8 @@ jobs:
           - 09-deployment
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: astral-sh/setup-uv@v3
         with:
           python-version: "3.11"

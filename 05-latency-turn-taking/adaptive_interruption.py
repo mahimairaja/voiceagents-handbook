@@ -64,10 +64,9 @@ async def my_agent(ctx: JobContext):
                 # Half a second of detected speech before counting as an
                 # interruption. Lower (0.3) for quiet or hesitant users.
                 "min_duration": 0.5,
-                # Backchannels are usually one word. Raising min_words to 2
-                # forces the user to actually start a phrase before the
-                # agent stops, which is a useful belt-and-suspenders if you
-                # cannot deploy to LiveKit Cloud.
+                # Default is 0; set to 2 to force a phrase before
+                # interrupting (useful off LiveKit Cloud, where adaptive
+                # mode silently downgrades to VAD-only).
                 "min_words": 0,
                 # The false-interruption safety net. If a presumed
                 # interruption produces no transcript within this window,

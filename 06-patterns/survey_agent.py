@@ -98,6 +98,7 @@ class IntakeAgent(Agent):
         )
 
     async def on_enter(self) -> None:
+        await self.session.say("Hi, this is ACME Plumbing intake. I'll ask a few quick questions.")
         result = await IntakeTask(chat_ctx=self.chat_ctx).run()
         await self.session.say(
             f"Thanks {result.name}. A plumber will reach you at {result.phone} "
@@ -117,13 +118,10 @@ async def my_agent(ctx: JobContext):
             voice="9626c31c-bec5-4cca-baa8-f8ba9e84c8bc",
         ),
     )
+    # IntakeAgent.on_enter owns the first turn (greeting plus the start of
+    # the intake task). Do not also call session.generate_reply here, or the
+    # caller will hear two opening prompts overlap.
     await session.start(agent=IntakeAgent(), room=ctx.room)
-    await session.generate_reply(
-        instructions=(
-            "Greet the caller as ACME Plumbing intake and start collecting "
-            "their information."
-        )
-    )
 
 
 if __name__ == "__main__":

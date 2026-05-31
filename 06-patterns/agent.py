@@ -117,8 +117,7 @@ async def my_agent(ctx: JobContext):
     await session.start(agent=TriageAgent(), room=ctx.room)
     await session.generate_reply(
         instructions=(
-            "Greet the caller as the ACME Plumbing front desk and ask "
-            "how you can help today."
+            "Greet the caller as the ACME Plumbing front desk and ask how you can help today."
         )
     )
 

@@ -39,7 +39,6 @@ from livekit.agents.evals import (
     task_completion_judge,
 )
 from livekit.plugins import cartesia, deepgram, openai, silero
-from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
 load_dotenv()
 
@@ -63,7 +62,8 @@ class Assistant(Agent):
     async def get_next_available_slot(self, context: RunContext) -> dict:
         """Return the next available service appointment slot.
 
-        Use this when the caller asks about scheduling or availability.
+        Use this when the caller asks about scheduling, availability, or when
+        they want to book a plumber visit.
         """
         return {
             "slot_id": "slot-001",
@@ -79,7 +79,6 @@ async def entrypoint(ctx: JobContext) -> None:
 
     session = AgentSession(
         vad=silero.VAD.load(),
-        turn_detection=MultilingualModel(),
         stt=deepgram.STT(model="nova-3"),
         llm=openai.LLM(model="gpt-4.1-mini"),
         tts=cartesia.TTS(

@@ -1,0 +1,16 @@
+[project]
+name = "voiceagents-handbook-ch06"
+version = "0.1.0"
+description = "Code for Chapter 6 of Voice Agents Handbook: Common Patterns"
+requires-python = ">=3.11"
+dependencies = [
+    "livekit-agents==1.5.15",
+    "livekit-api>=1.0",
+    "livekit-plugins-silero>=1.5,<1.6",
+    "livekit-plugins-deepgram>=1.5,<1.6",
+    "livekit-plugins-openai>=1.5,<1.6",
+    "livekit-plugins-cartesia>=1.5,<1.6",
+    "livekit-plugins-anthropic>=1.5,<1.6",
+    "livekit-plugins-google>=1.5,<1.6",
+    "python-dotenv>=1.0",
+]

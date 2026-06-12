@@ -1,0 +1,7 @@
+{
+  "trunk": {
+    "name": "ACME Plumbing inbound",
+    "numbers": ["+15105550100"],
+    "krispEnabled": true
+  }
+}

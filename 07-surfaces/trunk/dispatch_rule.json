@@ -1,0 +1,12 @@
+{
+  "dispatch_rule": {
+    "name": "Route to receptionist",
+    "trunkIds": ["<inbound-trunk-id>"],
+    "rule": {
+      "dispatchRuleIndividual": { "roomPrefix": "call-" }
+    },
+    "roomConfig": {
+      "agents": [{"agentName": "voiceagents-handbook-ch07"}]
+    }
+  }
+}

@@ -1,0 +1,11 @@
+[project]
+name = "voiceagents-handbook-ch01"
+version = "0.1.0"
+description = "Code for Chapter 1 of Voice Agents Handbook"
+requires-python = ">=3.11"
+dependencies = [
+    "livekit-agents==1.5.15",
+    "livekit-plugins-silero>=1.5,<1.6",
+    "livekit-plugins-turn-detector>=1.5,<1.6",
+    "python-dotenv>=1.0",
+]

@@ -1,0 +1,26 @@
+# LiveKit Cloud deployment config for the Chapter 9 agent.
+#
+# `lk agent` commands read this file from the working directory. The schema is
+# deliberately small: it identifies the project and the agent, and nothing else.
+# `lk agent config` generates it for you and fills in the IDs after your first
+# deploy, so you rarely hand-write it.
+#
+# IMPORTANT: the operational knobs a production voice agent cares about
+# (regions, autoscaling bounds, prewarmed worker count, drain timeout) are NOT
+# set in this file. The CLI ignores unknown keys. Configure them where they
+# actually live:
+#   - Regions, min/max replicas, autoscaling: the LiveKit Cloud dashboard
+#     (Agents > your agent > Settings), or `lk agent` flags at deploy time.
+#   - Prewarming: in code, via `server.setup_fnc` (see prewarm.py). The number
+#     of idle/prewarmed workers is a dashboard/plan setting, not a file key.
+#   - Drain timeout: LiveKit Cloud's rolling deploy already gives sessions up to
+#     one hour to finish; for self-hosted workers, see drain.sh.
+
+[project]
+  # Your LiveKit Cloud project subdomain (the part before .livekit.cloud).
+  subdomain = "your-project-subdomain"
+
+[agent]
+  # Assigned by LiveKit Cloud on first deploy and written back here by
+  # `lk agent create`. Leave as-is until then.
+  id = "your-agent-id"

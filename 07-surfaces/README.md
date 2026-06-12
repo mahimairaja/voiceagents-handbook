@@ -5,8 +5,8 @@ Three surfaces (phone, browser, mobile), one agent. The transport changes; the a
 ## What this folder contains
 
 - `agent.py`: surface-agnostic baseline. Makes no assumptions about how the participant arrived.
-- `phone_agent.py`: SIP-tuned variant. Adds agent-side BVC noise cancellation and a phone-trained STT model.
-- `surface_adaptation.py`: branches on `participant.kind` so SIP callers get narrowband STT plus BVC and WebRTC clients get the full-bandwidth model. This is the corrected version of the example printed in Chapter 7 section 5.
+- `phone_agent.py`: SIP-tuned variant. Adds agent-side BVCTelephony noise cancellation (the telephony-tuned model for narrowband SIP audio) and a phone-trained STT model.
+- `surface_adaptation.py`: branches on `participant.kind` so SIP callers get narrowband STT plus BVCTelephony and WebRTC clients get the full-bandwidth model. This is the corrected version of the example printed in Chapter 7 section 5.
 - `trunk/inbound_trunk.json`: example LiveKit SIP inbound trunk config with Krisp on.
 - `trunk/dispatch_rule.json`: example dispatch rule that routes calls into per-call rooms and dispatches this chapter's agent.
 - `trunk/README.md`: step-by-step for registering a SIP trunk and pointing your provider at LiveKit.
@@ -59,7 +59,7 @@ uv run python surface_adaptation.py dev
 | File | What it does | Book section |
 | ---- | ------------ | ------------ |
 | `agent.py` | Surface-agnostic baseline. | Chapter 7 sections 1 and 6 |
-| `phone_agent.py` | SIP-tuned: BVC plus narrowband STT plus phone prompt. | Chapter 7 section 2 |
+| `phone_agent.py` | SIP-tuned: BVCTelephony plus narrowband STT plus phone prompt. | Chapter 7 section 2 |
 | `surface_adaptation.py` | Branches on `participant.kind` to pick STT and NC per surface. | Chapter 7 section 5 |
 | `trunk/inbound_trunk.json` | SIP inbound trunk with Krisp on. | Chapter 7 section 2 |
 | `trunk/dispatch_rule.json` | Dispatch rule mapping numbers to the agent. | Chapter 7 section 2 |

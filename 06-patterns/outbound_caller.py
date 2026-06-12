@@ -33,6 +33,7 @@ from livekit.agents import (
     AgentServer,
     AgentSession,
     JobContext,
+    RoomInputOptions,
 )
 from livekit.plugins import cartesia, deepgram, openai, silero
 
@@ -105,7 +106,10 @@ async def my_agent(ctx: JobContext):
     await session.start(
         agent=OutboundAssistant(),
         room=ctx.room,
-        participant=participant,
+        # Bind the session's audio input to the dialed callee specifically,
+        # not to whoever else might be in the room. AgentSession.start has no
+        # participant= kwarg; you target a participant by identity here.
+        room_input_options=RoomInputOptions(participant_identity=participant.identity),
     )
     # Do not greet first. Wait for the callee to speak. The omitted
     # generate_reply() call is the entire reason this feels like a human call

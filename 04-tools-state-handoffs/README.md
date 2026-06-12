@@ -6,7 +6,7 @@ The ACME Plumbing booking flow: function tools, typed `userdata`, and a handoff 
 
 - `agent.py`: ACME Plumbing booking hero. Reception agent with pricing lookup, booking tool, typed `CallData` userdata, and a handoff to `BillingAgent`.
 - `function_tool_basic.py`: minimal single-tool example. The decorator, the docstring-as-prompt, the return shape.
-- `typed_userdata.py`: typed `userdata` as the per-session spine. Two tools writing to and reading from a `CallData` dataclass.
+- `typed_userdata.py`: typed `userdata` as the per-session spine. Three tools (`record_caller_name`, `get_service_price`, `summarize_quote`) writing to and reading from a `CallData` dataclass.
 - `handoff_pattern.py`: two `Agent` subclasses, one tool that returns the new agent, `chat_ctx.copy(exclude_instructions=True)` to carry the conversation forward.
 - `error_path.py`: a tool that fails on purpose. Shows `context.disallow_interruptions()` and `ToolError` with LLM-readable recovery instructions.
 
@@ -47,7 +47,7 @@ uv run python error_path.py dev
 | ---- | ------------ | ------------ |
 | `agent.py` | Full ACME Plumbing booking flow: pricing tool, booking tool, typed userdata, handoff to billing. | 4.1 through 4.5 |
 | `function_tool_basic.py` | One read-only tool, no state, no handoff. | 4.1 A first tool |
-| `typed_userdata.py` | Two tools sharing a `CallData` dataclass across turns. | 4.3 State across tools |
+| `typed_userdata.py` | Three tools sharing a `CallData` dataclass across turns. | 4.3 State across tools |
 | `handoff_pattern.py` | Reception agent transfers to billing agent mid-call. | 4.4 When one agent is not enough |
 | `error_path.py` | `disallow_interruptions()` plus `ToolError` for a mutating tool that fails. | 4.2 Mutating tools |
 

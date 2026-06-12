@@ -99,7 +99,7 @@ class IntakeAgent(Agent):
 
     async def on_enter(self) -> None:
         await self.session.say("Hi, this is ACME Plumbing intake. I'll ask a few quick questions.")
-        result = await IntakeTask(chat_ctx=self.chat_ctx).run()
+        result = await IntakeTask(chat_ctx=self.chat_ctx)
         await self.session.say(
             f"Thanks {result.name}. A plumber will reach you at {result.phone} "
             f"to confirm the visit to {result.address}."

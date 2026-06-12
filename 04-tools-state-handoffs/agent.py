@@ -21,6 +21,7 @@ from livekit.agents import (
 )
 from livekit.agents.llm import ToolError
 from livekit.plugins import cartesia, deepgram, openai, silero
+from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
 load_dotenv()
 
@@ -204,6 +205,7 @@ async def acme_plumbing(ctx: JobContext):
     session = AgentSession[CallData](
         userdata=CallData(),
         vad=silero.VAD.load(),
+        turn_detection=MultilingualModel(),
         stt=deepgram.STT(model="nova-3"),
         llm=openai.LLM(model="gpt-4.1-mini"),
         tts=cartesia.TTS(

@@ -7,10 +7,11 @@ Ship the agent: a deployable voice agent, a production-shaped Dockerfile, prewar
 - `agent.py`: the hero agent. Greeting, one `function_tool`, and a `metrics_collected` listener that writes per-session JSONL to `./session-metrics/`.
 - `prewarm.py`: the prewarm pattern. Loads silero VAD and the multilingual turn-detector once per worker via `server.setup_fnc`.
 - `observability.py`: OTLP adapter. Turns `metrics_collected` events into OpenTelemetry spans you can ship to Honeycomb, Grafana Cloud, or a local collector.
-- `Dockerfile`: production-shaped image (python:3.11-slim, uv sync from lockfile, non-root user, model files baked in).
+- `quality_eval.py`: the production half of the Chapter 8 test loop. Runs `JudgeGroup` (accuracy, relevancy, safety, task-completion) against the live transcript on the session shutdown callback.
+- `Dockerfile`: production-shaped image (python:3.11-slim, uv sync from the committed lockfile, non-root user, model files baked in).
 - `docker-compose.yml`: brings up the agent plus an optional otel-collector for local trace exploration.
 - `drain.sh`: graceful SIGTERM-then-wait-then-SIGKILL drain compatible with hour-long sessions.
-- `livekit.toml`: LiveKit Cloud worker config with prewarm count, geographic regions, and drain timeout.
+- `livekit.toml`: LiveKit Cloud deploy config. It identifies the project and agent only; regions, autoscaling, and prewarm count are dashboard settings, not file keys (the comments in the file say where each one lives).
 
 ## Setup
 
@@ -42,13 +43,19 @@ To export OTLP spans, set `OTEL_EXPORTER_OTLP_ENDPOINT` in `.env`, then:
 uv run python observability.py dev
 ```
 
+To judge every conversation as it ends (quality eval on the shutdown callback):
+
+```bash
+uv run python quality_eval.py dev
+```
+
 ### Run with Docker Compose
 
 ```bash
 docker compose up --build
 ```
 
-The `agent` service starts in `start` mode (production), exposes the health-check port on `8081`, and forwards traces to the local `otel-collector`. Provide an `otel-collector-config.yaml` next to `docker-compose.yml` to route those traces to your real backend.
+The `agent` service starts in `start` mode (production) and exposes the health-check port on `8081`. It runs `agent.py`, which logs metrics to JSONL; it does not emit OTLP traces on its own. To forward traces, run the OTLP variant (`observability.py`) as the container command, or set `OTEL_EXPORTER_OTLP_ENDPOINT` and run `observability.py` locally. The optional `otel-collector` service (enable with `docker compose --profile otel up`) gives you a local endpoint; provide an `otel-collector-config.yaml` next to `docker-compose.yml` to route those traces to your real backend.
 
 ### Deploy to LiveKit Cloud
 
@@ -59,7 +66,7 @@ lk agent create   # first deploy
 lk agent deploy   # subsequent deploys
 ```
 
-`livekit.toml` in this folder is the config the CLI reads. Update `agent_name`, regions, and `prewarm_count` for your setup.
+`livekit.toml` in this folder is the config the CLI reads. `lk agent create` fills in the project subdomain and agent id for you. Regions, autoscaling, and prewarm count are not keys in this file; set them in the LiveKit Cloud dashboard (the file's comments point to each one).
 
 ### Drain a self-hosted worker
 
@@ -84,10 +91,11 @@ The script sends SIGTERM, waits up to `LIVEKIT_DRAIN_TIMEOUT` seconds (default 6
 | `agent.py` | Deployable agent with tool and per-session metrics log | Section 2, 5 |
 | `prewarm.py` | Prewarm hook for VAD and turn detector | Section 4 |
 | `observability.py` | OTLP span exporter wrapping `metrics_collected` | Section 5 |
+| `quality_eval.py` | `JudgeGroup` quality eval on the session shutdown callback | Section 5 |
 | `Dockerfile` | Production-shaped container image | Section 2 |
 | `docker-compose.yml` | Local stack with agent and OTLP collector | Section 5 |
 | `drain.sh` | SIGTERM-respecting drain for hour-long sessions | Section 6 |
-| `livekit.toml` | LiveKit Cloud worker config (regions, prewarm, drain) | Section 2, 4 |
+| `livekit.toml` | LiveKit Cloud deploy config (project + agent id) | Section 2 |
 
 ## See also
 

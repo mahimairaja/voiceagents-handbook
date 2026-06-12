@@ -1,40 +1,26 @@
-# Example LiveKit Cloud worker config for the Chapter 9 agent.
+# LiveKit Cloud deployment config for the Chapter 9 agent.
 #
-# `lk agent create` reads this file to configure the deployment. Most fields
-# have sensible defaults; the ones below are the ones you actually want to
-# think about for a production voice agent.
+# `lk agent` commands read this file from the working directory. The schema is
+# deliberately small: it identifies the project and the agent, and nothing else.
+# `lk agent config` generates it for you and fills in the IDs after your first
+# deploy, so you rarely hand-write it.
+#
+# IMPORTANT: the operational knobs a production voice agent cares about
+# (regions, autoscaling bounds, prewarmed worker count, drain timeout) are NOT
+# set in this file. The CLI ignores unknown keys. Configure them where they
+# actually live:
+#   - Regions, min/max replicas, autoscaling: the LiveKit Cloud dashboard
+#     (Agents > your agent > Settings), or `lk agent` flags at deploy time.
+#   - Prewarming: in code, via `server.setup_fnc` (see prewarm.py). The number
+#     of idle/prewarmed workers is a dashboard/plan setting, not a file key.
+#   - Drain timeout: LiveKit Cloud's rolling deploy already gives sessions up to
+#     one hour to finish; for self-hosted workers, see drain.sh.
 
-# The unique name LiveKit uses to dispatch jobs to this worker.
-# Must match the agent_name passed to @server.rtc_session in agent.py.
-agent_name = "voiceagents-handbook-ch09"
+[project]
+  # Your LiveKit Cloud project subdomain (the part before .livekit.cloud).
+  subdomain = "your-project-subdomain"
 
-# How many concurrent sessions a single worker can handle before declining new
-# jobs. Voice agents bottleneck on CPU (VAD on every audio frame, turn detector
-# on every utterance), so the right number depends on the worker's vCPU count.
-# A 4-core machine typically handles ten to twenty-five sessions.
-max_concurrent_sessions = 20
-
-# Regions to deploy into. LiveKit Cloud routes callers to the closest POP and
-# dispatches jobs to workers in the nearest region, so geographic affinity
-# meaningfully improves audio latency for users far from your home region.
-regions = ["us-east-1", "eu-west-1"]
-
-# Number of workers to keep prewarmed and idle. Prewarmed workers have already
-# loaded VAD and turn detector weights via setup_fnc, so the first caller to
-# land on them does not pay the cold-start cost.
-prewarm_count = 2
-
-# Minimum and maximum worker count for autoscaling. Scale up aggressively
-# (voice traffic spikes are sustained, not bursty) and overprovision modestly:
-# every dropped session is a real customer.
-min_workers = 2
-max_workers = 50
-
-# When to add workers. Lower than the load_threshold so the autoscaler reacts
-# before existing workers stop accepting jobs.
-scale_up_threshold = 0.5
-load_threshold = 0.75
-
-# Drain timeout for rolling deploys. LiveKit Cloud's default is one hour;
-# anything shorter risks cutting callers off mid-sentence on a deploy.
-drain_timeout_seconds = 3600
+[agent]
+  # Assigned by LiveKit Cloud on first deploy and written back here by
+  # `lk agent create`. Leave as-is until then.
+  id = "your-agent-id"

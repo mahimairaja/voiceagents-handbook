@@ -22,6 +22,7 @@ from livekit.agents import (
     function_tool,
 )
 from livekit.plugins import cartesia, deepgram, openai, silero
+from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
 load_dotenv()
 
@@ -110,6 +111,7 @@ async def typed_userdata_agent(ctx: JobContext):
     session = AgentSession[CallData](
         userdata=CallData(),
         vad=silero.VAD.load(),
+        turn_detection=MultilingualModel(),
         stt=deepgram.STT(model="nova-3"),
         llm=openai.LLM(model="gpt-4.1-mini"),
         tts=cartesia.TTS(

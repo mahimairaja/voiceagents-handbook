@@ -5,9 +5,11 @@ Differences from the surface-agnostic baseline in agent.py:
 1. The STT model is Deepgram's nova-2-phonecall variant, trained on
    narrowband telephony audio (8 kHz G.711) rather than full-bandwidth
    browser audio.
-2. Agent-side noise cancellation (BVC) is enabled on the input audio
-   so background noise from the caller's environment is suppressed
-   before STT sees it. This stacks with trunk-level Krisp; ship both.
+2. Agent-side noise cancellation (BVCTelephony) is enabled on the input
+   audio so background noise from the caller's environment is suppressed
+   before STT sees it. BVCTelephony is the telephony-tuned model for
+   narrowband (8 kHz) SIP audio; the wideband BVC() would over-suppress
+   phone speech. This stacks with trunk-level Krisp; ship both.
 3. The prompt nudges the agent to verbally signal slow work and to
    confirm understanding explicitly, since the caller cannot see a
    "thinking" indicator or a transcription pane.
@@ -58,7 +60,7 @@ async def my_agent(ctx: JobContext):
         agent=PhoneAssistant(),
         room=ctx.room,
         room_input_options=agents.RoomInputOptions(
-            noise_cancellation=noise_cancellation.BVC(),
+            noise_cancellation=noise_cancellation.BVCTelephony(),
         ),
     )
     await session.generate_reply(

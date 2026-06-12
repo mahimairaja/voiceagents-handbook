@@ -8,7 +8,7 @@ The thirty-line baseline agent that names every component the rest of the book b
 
 ## Setup
 
-Prerequisites: Python 3.11+, uv, accounts with LiveKit Cloud, Deepgram, OpenAI, and Cartesia.
+Prerequisites: Python 3.11+, uv, and a LiveKit Cloud account. That is the only account you need: this chapter routes STT, LLM, and TTS through LiveKit Inference, so the Deepgram, OpenAI, and Cartesia models are billed through LiveKit. (You only need separate provider keys if you follow the chapter's alternative and swap `inference.*` for direct provider plugins.)
 
 ```bash
 cp .env.example .env
@@ -22,7 +22,7 @@ uv sync
 uv run python agent.py dev
 ```
 
-Connect to the dev session at https://agents-playground.livekit.io and pick the LiveKit project tied to your `LIVEKIT_URL`. The agent greets you the moment the room connects.
+Connect to the dev session at https://agents-playground.livekit.io and pick the LiveKit project tied to your `LIVEKIT_URL`. Because `agent.py` registers under a name (`agent_name="voiceagents-handbook-ch01"`), enter that name in the playground's **Agent name** field when you connect; that is what dispatches this agent into the room. The agent then greets you the moment it joins.
 
 ## What to listen for
 

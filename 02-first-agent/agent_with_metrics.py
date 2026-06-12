@@ -9,6 +9,7 @@ from livekit.agents import (
     metrics,
 )
 from livekit.plugins import cartesia, deepgram, openai, silero
+from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
 load_dotenv()
 
@@ -33,6 +34,7 @@ async def my_agent(ctx: JobContext):
     await ctx.connect()
     session = AgentSession(
         vad=silero.VAD.load(),
+        turn_detection=MultilingualModel(),
         stt=deepgram.STT(model="nova-3"),
         llm=openai.LLM(model="gpt-4.1-mini"),
         tts=cartesia.TTS(

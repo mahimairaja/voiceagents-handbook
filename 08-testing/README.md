@@ -12,11 +12,11 @@ A small ACME Plumbing agent plus a pytest suite that drives it through text-mode
 
 ## Setup
 
-Prerequisites: Python 3.11+, uv, accounts with LiveKit Cloud, Deepgram, OpenAI, and Cartesia. The pytest suite only needs the OpenAI key (judges and inference LLM both run through OpenAI); the LiveKit and provider keys are only needed if you also want to talk to the agent live with `uv run python agent.py dev`.
+Prerequisites: Python 3.11+, uv, accounts with LiveKit Cloud, Deepgram, OpenAI, and Cartesia. The pytest suite needs your LiveKit credentials (`LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`), because the agent's LLM and the judges both run through `inference.LLM`, which authenticates against LiveKit Inference (not the OpenAI key directly). The Deepgram, OpenAI, and Cartesia provider keys are only needed if you also want to talk to the agent live with `uv run python agent.py dev`.
 
 ```bash
 cp .env.example .env
-# Fill in keys (OPENAI_API_KEY is the only one the tests need)
+# Fill in keys (the tests need the three LIVEKIT_* values; provider keys are for live `dev` runs)
 uv sync
 ```
 
